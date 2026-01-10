@@ -14,8 +14,12 @@ const getWebSocketUrl = () => {
     if (envUrl.startsWith('ws://') || envUrl.startsWith('wss://')) {
       return envUrl;
     }
-    // Otherwise, it's a hostname from Render - use wss://
-    return `wss://${envUrl}`;
+    // If it already has a domain, just add wss://
+    if (envUrl.includes('.')) {
+      return `wss://${envUrl}`;
+    }
+    // Render's fromService returns just the service name - append .onrender.com
+    return `wss://${envUrl}.onrender.com`;
   }
   return 'ws://localhost:3001';
 };

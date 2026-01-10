@@ -6,7 +6,21 @@ import { VoiceButton } from './components/VoiceButton';
 import { Transcript } from './components/Transcript';
 import { StatusIndicator } from './components/StatusIndicator';
 
-const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
+// Build WebSocket URL - handle both local and production environments
+const getWebSocketUrl = () => {
+  const envUrl = import.meta.env.VITE_WS_URL;
+  if (envUrl) {
+    // If it's already a full URL, use it
+    if (envUrl.startsWith('ws://') || envUrl.startsWith('wss://')) {
+      return envUrl;
+    }
+    // Otherwise, it's a hostname from Render - use wss://
+    return `wss://${envUrl}`;
+  }
+  return 'ws://localhost:3001';
+};
+
+const WS_URL = getWebSocketUrl();
 
 function App() {
   const [messages, setMessages] = useState([]);

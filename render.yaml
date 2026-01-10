@@ -1,0 +1,35 @@
+services:
+  # Backend API + WebSocket server
+  - type: web
+    name: voice-ai-server
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false  # You'll set this manually in Render dashboard
+      - key: NODE_ENV
+        value: production
+
+  # React frontend (static site)
+  - type: web
+    name: voice-ai-client
+    runtime: static
+    region: oregon
+    plan: free
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    envVars:
+      - key: VITE_WS_URL
+        fromService:
+          name: voice-ai-server
+          type: web
+          property: host

@@ -10,13 +10,13 @@ services:
     startCommand: npm start
     envVars:
       - key: GROQ_API_KEY
-        sync: false  # You'll set this manually in Render dashboard
+        sync: false
       - key: NODE_ENV
         value: production
 
-  # React frontend (static site)
-  - type: static
-    name: voice-ai-client
+staticSites:
+  # React frontend
+  - name: voice-ai-client
     rootDir: client
     buildCommand: npm install && npm run build
     staticPublishPath: dist

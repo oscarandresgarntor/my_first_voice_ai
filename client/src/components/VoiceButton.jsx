@@ -1,11 +1,31 @@
+import { useCallback, useRef } from 'react';
+
 export function VoiceButton({ isListening, isDisabled, onPressStart, onPressEnd }) {
+  const isPressedRef = useRef(false);
+
+  const handlePressStart = useCallback((e) => {
+    e.preventDefault();
+    if (!isPressedRef.current) {
+      isPressedRef.current = true;
+      onPressStart();
+    }
+  }, [onPressStart]);
+
+  const handlePressEnd = useCallback((e) => {
+    e.preventDefault();
+    if (isPressedRef.current) {
+      isPressedRef.current = false;
+      onPressEnd();
+    }
+  }, [onPressEnd]);
+
   return (
     <button
-      onMouseDown={onPressStart}
-      onMouseUp={onPressEnd}
-      onMouseLeave={onPressEnd}
-      onTouchStart={onPressStart}
-      onTouchEnd={onPressEnd}
+      onMouseDown={handlePressStart}
+      onMouseUp={handlePressEnd}
+      onMouseLeave={handlePressEnd}
+      onTouchStart={handlePressStart}
+      onTouchEnd={handlePressEnd}
       disabled={isDisabled}
       className={`
         relative w-32 h-32 rounded-full transition-all duration-200

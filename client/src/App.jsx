@@ -5,6 +5,8 @@ import { useWebSocket } from './hooks/useWebSocket';
 import { VoiceButton } from './components/VoiceButton';
 import { Transcript } from './components/Transcript';
 import { StatusIndicator } from './components/StatusIndicator';
+import { StopButton } from './components/StopButton';
+import { VoiceSelector } from './components/VoiceSelector';
 
 // Build WebSocket URL - handle both local and production environments
 const getWebSocketUrl = () => {
@@ -45,6 +47,9 @@ function App() {
     isSupported: speechSynthesisSupported,
     speakImmediate,
     cancel: cancelSpeech,
+    voiceProfiles,
+    selectedVoiceId,
+    setSelectedVoiceId,
   } = useSpeechSynthesis();
 
   const { isConnected, sendMessage, onMessage } = useWebSocket(WS_URL);
@@ -161,12 +166,19 @@ function App() {
               Your AI guide to world history
             </p>
           </div>
-          <button
-            onClick={handleClear}
-            className="text-sm text-gray-500 hover:text-gray-700 px-3 py-1 rounded hover:bg-gray-100"
-          >
-            Clear Chat
-          </button>
+          <div className="flex items-center gap-4">
+            <VoiceSelector
+              voiceProfiles={voiceProfiles}
+              selectedVoiceId={selectedVoiceId}
+              onVoiceChange={setSelectedVoiceId}
+            />
+            <button
+              onClick={handleClear}
+              className="text-sm text-gray-500 hover:text-gray-700 px-3 py-1 rounded hover:bg-gray-100"
+            >
+              Clear Chat
+            </button>
+          </div>
         </div>
       </header>
 
@@ -198,6 +210,9 @@ function App() {
               {isListening ? 'Release to send' : 'Hold to speak'}
             </p>
           </div>
+
+          {/* Stop button */}
+          <StopButton isSpeaking={isSpeaking} onStop={cancelSpeech} />
         </div>
       </main>
 
